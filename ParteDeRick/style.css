@@ -1,0 +1,475 @@
+body{
+    margin: 0;
+    padding: 0;
+    background-color: rgb(255, 245, 230);
+    font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+}
+
+header{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 20px;
+    position: relative;
+    min-height: 100px;
+    background-color: fff;
+}
+
+header .logo {
+    position: absolute;
+    left: 40%;
+    height: 90px;
+    transform: translateY(-50%)
+}
+
+a{
+    text-decoration: none;
+    color: inherit;
+}
+
+.dropdown{
+    min-width: 15em;
+    position: relative;
+    margin: 2em;
+}
+
+.dropdown * {
+    box-sizing: border-box;
+}
+
+nav {
+    background-color: #ffd68a; /* Fundo escuro para destacar o laranja */
+    padding: 15px 0;
+}
+
+nav ul {
+    list-style: none;
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+    gap: 15px; /* Espaçamento entre os itens */
+    margin: 0;
+    padding: 0;
+}
+
+nav ul li {
+    color: #ff8d00;
+    font-family: Arial, sans-serif;
+    font-weight: bold;
+    font-size: 18px;
+}
+
+nav ul li a {
+    text-decoration: none;
+    color: #ff8d00;
+    transition: 0.3s;
+}
+
+nav ul li a:hover {
+    color: #fff; /* Fica branco ao passar o mouse */
+}
+
+.menu-usuario {
+    position: relative;
+    display: inline-block;
+}
+
+.icone {
+    background: none;
+    border: none;
+    cursor: pointer;
+}
+
+.submenu {
+    position: absolute;
+    top: 60px;
+    right: 0;
+    background: #fff;
+    padding: 10px;
+    border-radius: 6px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.15);
+    display: none; 
+    flex-direction: column;
+}
+
+.submenu a {
+    text-decoration: none;
+    padding: 8px 12px;
+    display: block;
+    color: #000;
+    width: max-content;
+}
+
+.submenu a:hover {
+    background: #eee;
+}
+
+.menu-usuario:focus-within .submenu {
+    display: flex;
+}
+
+.banner{
+    margin-top: 30px;
+    width: 1400px;
+    height: auto;
+}
+
+h1 {
+    color: #ff8d00;
+}
+
+p {
+    font-size: 18px;
+    text-align: center;
+    margin-bottom: 30px;
+    margin: 0;
+}
+
+a.botao {
+    background-color: #ff8d00;
+    color: white;
+    text-decoration: none;
+    padding: 12px 25px;
+    border-radius: 8px;
+    font-weight: bold;
+    transition: background-color 0.3s ease;
+    z-index: 99;
+    position: relative;
+    }
+
+a.botao:hover {
+    background-color: #e57d00;
+}
+
+.conteudo, .contato{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+}
+
+.produtos {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr); 
+    gap: 40px; 
+    justify-items: center;
+    width: 100%;
+}
+
+
+.gifsdiv{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
+}
+
+.gifsdiv img{
+    margin: 60px;
+    border: 3px solid #222;
+    border-radius: 15px;
+    height: 400px;
+    width: auto;
+}
+
+.vitrinepaginainicial{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
+    gap: 60px;
+    margin-top: 70px;
+}
+
+.vitrinepaginainicial p{
+    margin: 5px;
+}
+
+.prodpaginic{
+    text-align: center;
+}
+
+.prodpaginic img{
+    height: 300px;
+    width: auto;
+}
+
+.h1cat, .h1vitrine{
+    text-align: center;
+    font-size: 40px;
+    position: relative;
+}
+
+.h1cat::before{
+    content: '';
+    background-color: #e57d00;
+    position: absolute;
+    height: 8px;
+    width: 400%;
+    bottom: -10;
+    left: -300;
+    border-radius: 10px;
+}
+.h1vitrine::before{
+    content: '';
+    background-color: #e57d00;
+    position: absolute;
+    height: 8px;
+    width: 230%;
+    bottom: -10;
+    left: -300;
+    border-radius: 10px;
+}
+
+.categorias{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
+    gap: 50px;
+}
+
+.categorias img{
+    height: 300px;
+    width: auto;
+}
+
+.categorias a{
+    text-decoration: none;
+    color: inherit;
+}
+
+footer{
+    background-color: #ffdba8;
+    margin: 40px 0 0 0;
+    padding: 25px;
+    border-radius: 10px;
+    text-align: center;
+
+}
+
+.login-container {
+    width: 50%;
+    background: #fff7e6;
+    margin: 40px auto;
+    padding: 40px;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    border: 2px solid #ffd68a;
+    text-align: center;
+}
+
+.login-container h1 {
+    text-align: center;
+    font-size: 32px;
+    margin-bottom: 30px;
+    color: #ff8d00;
+}
+
+.login-container a {
+    color: #ff8d00;
+    font-weight: bold;
+}
+
+.login-container a:hover {
+    color: #e44100;
+    text-decoration: underline;
+}
+
+.login-container label {
+    font-weight: bold;
+    color: #d66b07;
+    font-size: 16px;
+    display: block;
+    margin-top: 15px;
+    text-align: left;
+}
+
+.login-container input[type="email"],
+.login-container input[type="password"],
+.login-container textarea,
+.login-container input[type="text"] {
+    width: 100%;
+    padding: 12px;
+    border-radius: 8px;
+    border: 2px solid #ffcc80;
+    background-color: #fff;
+    font-size: 16px;
+    transition: 0.3s;
+    box-sizing: border-box;
+}
+
+.login-container input:focus, .login-container textarea:focus {
+    border-color: #ff8d00;
+    box-shadow: 0 0 8px rgba(255, 141, 0, 0.4);
+    outline: none;
+}
+
+.login-container button{
+    margin-top: 20px;
+    padding: 12px 24px;
+    background-color: #ff8d00;
+    border: none;
+    color: white;
+    font-size: 18px;
+    font-weight: bold;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.login-container button:hover{
+    background-color: #ca2d06;
+    transform: scale(1.03);
+}
+
+.erro {
+    background-color: #ffe6e6;
+    border: 1px solid #ff8a8a;
+    color: #cc0000;
+    padding: 10px 15px;
+    border-radius: 8px;
+    text-align: center;
+    width: fit-content;
+    margin: 10px auto 20px auto;
+    font-size: 16px;
+}
+
+.pagproduto{
+    margin-top: 40px;
+    background: #fff;
+    width: 80%;
+    max-width: 1100px;
+    padding: 40px;
+    border-radius: 20px;
+    box-shadow: 0 4px 25px rgba(0,0,0,0.1);
+    display: flex;
+    gap: 40px;
+    align-items: center;
+    transform: translateX(8%);
+    z-index: 1;
+    margin-left: 10%;
+}
+
+.product-image img {
+    width: 450px;
+    height: 450px;
+    object-fit: cover;
+    border-radius: 15px;
+}
+
+.product-info {
+    flex: 1;
+}
+
+.product-info h1 {
+    font-size: 42px;
+    color: #333;
+    margin-bottom: 10px;
+}
+
+.price {
+    font-size: 32px;
+    color: #444;
+    margin: 15px 0 30px;
+    font-weight: bold;
+}
+
+.buy-btn {
+    padding: 15px 35px;
+    background: #f80000;
+    border: none;
+    color: #fff;
+    font-size: 22px;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.buy-btn:hover {
+    background: #ff6600;
+}
+
+.container-produtos {
+    display: flex;
+    gap: 20px;
+}
+
+.menu-lateral {
+    width: 220px;
+    padding: 15px;
+    background: rgb(255, 245, 230);
+    border-radius: 8px;
+    height: fit-content;
+}
+
+.menu-lateral h3 {
+    margin-top: 0;
+    font-size: 18px;
+}
+
+.menu-lateral ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.menu-lateral li {
+    margin-bottom: 8px;
+}
+
+.menu-lateral a {
+    text-decoration: none;
+    color: #333;
+    padding: 6px 10px;
+    display: block;
+    border-radius: 4px;
+}
+
+.menu-lateral a:hover {
+    background: #ddd;
+}
+
+.menu-lateral .ativo {
+    background: #ff8d00;
+    color: #fff;
+}
+
+
+
+@media screen and (max-width: 1400px) {
+    .categorias{
+        gap: 30px;
+    }
+    .categorias img{
+        height: 220px;
+    }
+    .gifsdiv img{
+        height: 300px;
+        margin: 30px;
+    }
+    .prodpaginic img{
+        height: 200px;
+    }
+    .prodpaginic p{
+        font-size: 15px;
+    }
+    .banner{
+        width: 1100px;
+    }
+}
+
+@media (max-width: 900px) {
+    .login-container {
+        width: 80%;
+    }
+}
+
+@media (max-width: 600px) {
+    .login-container {
+        width: 95%;
+        padding: 25px;
+    }
+
+    .login-container h2 {
+        font-size: 26px;
+    }
+}
