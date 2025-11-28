@@ -16,7 +16,7 @@ if ($acao_msg == 'marcar_lido' && $id_msg) {
 
     // SQL para atualizar o status 'lido' para 1
     // IMPORTANTE: Use Prepared Statements na versão final!
-    $sql_update = "UPDATE contatos SET lido = 1 WHERE id = '$id_msg'";
+    $sql_update = "UPDATE mensagens SET lido = 1 WHERE id = '$id_msg'";
     
     if (mysqli_query($conexao, $sql_update)) {
         $mensagem_status = "<p class='sucesso'>Mensagem ID **$id_msg** marcada como lida.</p>";
@@ -24,12 +24,12 @@ if ($acao_msg == 'marcar_lido' && $id_msg) {
         $mensagem_status = "<p class='erro'>Erro ao atualizar status: " . mysqli_error($conexao) . "</p>";
     }
     // Redireciona para evitar reenvio do GET (PRG Pattern)
-    header("Location: index.php?pg=contatos&status=$filtro"); 
+    header("Location: index.php?pg=contato_cliente&status=$filtro"); 
     exit();
 }
 
 // --- 2. CONFIGURAÇÃO DA CONSULTA SQL ---
-$sql = "SELECT id, nome, email, assunto, mensagem, data_envio, lido FROM contatos";
+$sql = "SELECT id, nome, assunto, mensagem, data, lido FROM mensagens";
 
 if ($filtro == 'nao_lido') {
     $sql .= " WHERE lido = 0";
@@ -37,14 +37,14 @@ if ($filtro == 'nao_lido') {
     $sql .= " WHERE lido = 1";
 }
 
-$sql .= " ORDER BY data_envio DESC"; // Mais recentes primeiro
+$sql .= " ORDER BY data DESC"; // Mais recentes primeiro
 
 $resultado = mysqli_query($conexao, $sql);
 
 // Função auxiliar para criar links de filtro ativos
 function criarLinkFiltroContatos($status, $label, $filtro_atual) {
     $ativo = ($status == $filtro_atual) ? 'style="background-color: #ff6600; color: white; border-color: #ff6600;"' : '';
-    $href  = "index.php?pg=contatos&status=$status";
+    $href  = "index.php?pg=contato_cliente&status=$status";
     
     echo "<a class='botao filtro-btn' href='$href' $ativo style='padding: 8px 15px;'>$label</a>";
 }
@@ -79,11 +79,11 @@ function criarLinkFiltroContatos($status, $label, $filtro_atual) {
                     // Estilo para destacar mensagens não lidas
                     $estilo_nao_lido = $dados['lido'] == 0 ? 'style="font-weight: bold; background-color: #fff8e1;"' : '';
                     $preview_msg = substr($dados['mensagem'], 0, 50) . '...';
-                    $data_formatada = date('d/m/y', strtotime($dados['data_envio']));
+                    $data_formatada = date('d/m/y', strtotime($dados['data']));
 
                     echo "<tr $estilo_nao_lido>";
                     echo "<td style='padding: 10px;'>$dados[id]</td>";
-                    echo "<td>$dados[nome]<br><small style='color: #666;'>$dados[email]</small></td>";
+                    echo "<td>$dados[nome]</td>";
                     echo "<td>
                             <strong>$dados[assunto]</strong><br>
                             <span style='font-size: 0.9em; color: #555;'>$preview_msg</span>
@@ -93,7 +93,7 @@ function criarLinkFiltroContatos($status, $label, $filtro_atual) {
 
                     if ($dados['lido'] == 0) {
                         echo "<span style='color: #ff8d00; font-weight: bold;'>NOVA</span><br>";
-                        echo "<a href='index.php?pg=contatos&acao_msg=marcar_lido&id=$dados[id]&status=$filtro' class='botao' style='padding: 5px 10px; background-color: #007bff; margin-top: 5px;'>Marcar Lido</a>";
+                        echo "<a href='index.php?pg=contato_cliente&acao_msg=marcar_lido&id=$dados[id]&status=$filtro' class='botao' style='padding: 5px 10px; background-color: #007bff; margin-top: 5px;'>Marcar Lido</a>";
                     } else {
                         echo "<span style='color: #28a745;'>Lida</span>";
                     }

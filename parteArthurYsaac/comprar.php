@@ -19,7 +19,13 @@ $resultado = mysqli_query($conexao, $sql);
 if(mysqli_num_rows($resultado) > 0){
     while($dados = mysqli_fetch_array($resultado)){
         $nome = $dados["nome"];
-        $imagem = $dados["imagem"];
+        $img = $dados['imagem'];
+
+            if (strpos($img, 'uploads/') === 0) {
+                $src = '../' . $img;   // porque a vitrine também está dentro de /ParteDeAlgumLugar
+            } else {
+                $src = $img;
+            }
         $preco = $dados["preco"];
         $id = $dados["id"];
         $descricao = $dados["descricao"];
@@ -29,7 +35,7 @@ if(mysqli_num_rows($resultado) > 0){
         <p><a href="?pg=../parteArthurYsaac/logout">Sair</a></p>
         <div class="pagproduto">
         <div class="product-image">
-            <img src="<?php echo $dados['imagem']; ?>">
+            <?php echo"<img src='$src'>";?>
         </div>
 
         <div class="product-info">
@@ -38,7 +44,9 @@ if(mysqli_num_rows($resultado) > 0){
             echo "R$:";
             echo $dados['preco'];
              ?></div><p style='text-align: left; color: #444; margin-bottom: 15px;'><?php echo $dados['descricao']; ?></p>
-                <button class="buy-btn">Comprar agora</button>
+                <a class="buy-btn" href="?pg=../parteArthurYsaac/adicionar_ao_carrinho&id=<?= $id ?>">
+                    Comprar agora
+                </a>
             </div>
         </div><?php
     }

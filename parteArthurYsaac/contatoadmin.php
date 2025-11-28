@@ -4,12 +4,15 @@
 // =========================
 
 require_once __DIR__ . '/config.php';
-
+require_once "../ParteDeRick/config.inc.php";
 // Página protegida
 exigir_login();
 
 $mensagem = '';
 $errors = [];
+
+// GARANTE QUE TEMOS UMA CONEXÃO COM O BANCO
+// Se no seu config.php a conexão estiver em $conexao (mysqli), estará ok.
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
@@ -26,74 +29,91 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     if (empty($errors)) {
 
-        // Cria o registro do contato
-        $registro  = "=================================\n";
-        $registro .= "Data: " . date('Y-m-d H:i:s') . "\n";
-        $registro .= "Cliente ID: " . ($_SESSION['cliente_id'] ?? '-') . "\n";
-        $registro .= "Nome: " . ($_SESSION['cliente_nome'] ?? '-') . "\n";
-        $registro .= "Assunto: $assunto\n";
-        $registro .= "Mensagem:\n$texto\n\n";
+        // Pega os dados do cliente logado
+        $cliente_nome = $_SESSION['cliente_nome'] ?? 'Desconhecido';
+        $data = date('Y-m-d H:i:s');
 
-        // Salva no arquivo
-        file_put_contents(
-            __DIR__ . '/contatos_admin_log.txt',
-            $registro,
-            FILE_APPEND | LOCK_EX
-        );
+        // ============================
+        // SALVAR NA TABELA "mensagens"
+        // ============================
 
-        $mensagem = "Mensagem enviada ao administrador com sucesso!";
+        $sql = "INSERT INTO mensagens (nome, data, assunto, mensagem)
+                VALUES (?, ?, ?, ?)";
+
+        $stmt = $conexao->prepare($sql);
+        if ($stmt) {
+            $stmt->bind_param("ssss", $cliente_nome, $data, $assunto, $texto);
+            $stmt->execute();
+            $stmt->close();
+
+            $mensagem = "Mensagem enviada ao administrador com sucesso!";
+        } else {
+            $errors[] = "Erro ao preparar consulta SQL: " . $conexao->error;
+        }
     }
 }
 ?>
+
 <!doctype html>
 <html lang="pt-BR">
 <head>
-<meta charset="utf-8">
-<title>Contato com o Administrador - Sousadecor</title>
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<style>
-body{font-family:Arial,Helvetica,sans-serif;max-width:720px;margin:0 auto;padding:20px}
-label{display:block;margin-top:12px}
-input,textarea{width:100%;padding:10px;margin-top:4px}
-.erro{color:#b71c1c;margin-bottom:12px}
-.ok{color:green;font-weight:bold;margin-bottom:16px}
-button{padding:8px 16px;margin-top:12px}
-</style>
+    <meta charset="utf-8">
+    <title>Contato com o Administrador - Sousa Decor</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- mesmo CSS da página de login -->
+    <link rel="stylesheet" href="../ParteDeRick/style.css">
 </head>
 <body>
 
-<h1>Contato com o Administrador</h1>
+<div class="login-container">
+    <h1>Contato com o Administrador</h1>
 
-<p>Logado como: <strong><?= htmlspecialchars($_SESSION['cliente_nome']) ?></strong></p>
-<p><a href="comprar.php">Voltar</a> | <a href="logout.php">Sair</a></p>
+    <p style="margin-bottom: 15px;">
+        Logado como: <strong><?= htmlspecialchars($_SESSION['cliente_nome']) ?></strong>
+    </p>
+    <p style="margin-bottom: 25px;">
+        <a href="?pg=produtos">Voltar</a>
+        &nbsp;&nbsp;
+        <a href="?pg=../parteArthurYsaac/logout">Sair</a>
+    </p>
 
-<?php if ($mensagem): ?>
-<p class="ok"><?= htmlspecialchars($mensagem) ?></p>
-<?php endif; ?>
+    <?php if ($mensagem): ?>
+        <p class="ok" style="margin-bottom: 20px; color: green; font-weight: bold;">
+            <?= htmlspecialchars($mensagem) ?>
+        </p>
+    <?php endif; ?>
 
-<?php if (!empty($errors)): ?>
-<div class="erro">
-<ul>
-<?php foreach ($errors as $e): ?>
-<li><?= htmlspecialchars($e) ?></li>
-<?php endforeach; ?>
-</ul>
+    <?php if (!empty($errors)): ?>
+        <div class="erro">
+            <ul style="margin: 0; padding-left: 20px; text-align: left;">
+                <?php foreach ($errors as $e): ?>
+                    <li><?= htmlspecialchars($e) ?></li>
+                <?php endforeach; ?>
+            </ul>
+        </div>
+    <?php endif; ?>
+
+    <form method="post" style="text-align: left; margin-top: 20px;">
+        <label for="assunto">Assunto:</label>
+        <input
+            type="text"
+            id="assunto"
+            name="assunto"
+            value="<?= htmlspecialchars($_POST['assunto'] ?? '') ?>"
+            required
+        >
+
+        <label for="texto">Mensagem:</label>
+        <textarea
+            id="texto"
+            name="texto"
+            rows="6"
+            required
+        ><?= htmlspecialchars($_POST['texto'] ?? '') ?></textarea>
+
+        <button type="submit">Enviar</button>
+    </form>
 </div>
-<?php endif; ?>
-
-<form method="post">
-
-<label>Assunto:
-<input type="text" name="assunto" value="<?= htmlspecialchars($_POST['assunto'] ?? '') ?>">
-</label>
-
-<label>Mensagem:
-<textarea name="texto" rows="6"><?= htmlspecialchars($_POST['texto'] ?? '') ?></textarea>
-</label>
-
-<button type="submit">Enviar</button>
-
-</form>
 
 </body>
 </html>

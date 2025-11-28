@@ -57,8 +57,16 @@
 
 
         while($dados = mysqli_fetch_array($resultado)){
+            $img = $dados['imagem'];
+
+            if (strpos($img, 'uploads/') === 0) {
+                $src = '../' . $img;   // porque a vitrine também está dentro de /ParteDeAlgumLugar
+            } else {
+                $src = $img;
+            }
+
             echo "<div class='produto'> <a href='?pg=../parteArthurYsaac/comprar&id=$dados[id]'>
-                <img style='height:250px; width:250px;' src='$dados[imagem]'>
+                <img style='height:250px; width:250px;' src='$src'>
                 <p>$dados[nome]</p>
                     <p>R$:$dados[preco]</p></a></div>";
         }

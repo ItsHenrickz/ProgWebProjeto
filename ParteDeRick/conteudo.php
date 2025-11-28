@@ -135,5 +135,4 @@
     </div>
 </div>
 
-<a href="?pg=../ParteDePauloeGui/index">Vendedor</a>
 </div>

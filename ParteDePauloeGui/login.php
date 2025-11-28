@@ -1,5 +1,8 @@
 <?php
-
+// Inicia sessão (importante para usar $_SESSION)
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
 
 // Inclui o arquivo de configuração, que contém a conexão com o banco ($conexao).
 require_once "../ParteDeRick/config.inc.php";
@@ -8,50 +11,69 @@ $erro = "";
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // 1. Recebe os dados do formulário
-    $usuario_input = $_POST['usuario'] ?? '';
-    $senha_input = $_POST['senha'] ?? '';
+    $usuario_input = trim($_POST['usuario'] ?? '');
+    $senha_input   = $_POST['senha'] ?? '';
 
-    // 2. Consulta o banco de dados
-    // IMPORTANTE: Em um ambiente real, NUNCA use as variáveis diretamente na query! 
-    // Use Prepared Statements (PDO ou MySQLi) para prevenir SQL Injection.
-    $sql = "SELECT id, nome, email, senha FROM vendedores WHERE email = '$usuario_input' OR nome = '$usuario_input'";
-    $resultado = mysqli_query($conexao, $sql);
-    $dados = mysqli_fetch_assoc($resultado);
-
-    // 3. Verifica se o usuário existe e se a senha está correta
-    // A função password_verify é essencial para checar senhas criptografadas
-    if ($dados && password_verify($senha_input, $dados['senha'])) {
-        // LOGIN BEM-SUCEDIDO: Armazena dados na sessão
-        $_SESSION['admin_logado'] = true;
-        $_SESSION['admin_nome'] = $dados['nome'];
-        $_SESSION['admin_id'] = $dados['id'];
-        
-        // Redireciona para o painel de administração
-        header("Location: ?pg=../ParteDePauloeGui/CRUD_produtos");
-        exit();
+    if ($usuario_input === '' || $senha_input === '') {
+        $erro = "Preencha usuário e senha.";
     } else {
-        // LOGIN FALHOU
-        $erro = "Usuário ou senha inválidos. Verifique suas credenciais.";
+
+        // 2. Consulta o banco de dados com prepared statement
+        $sql = "SELECT id, nome, email, senha 
+                FROM vendedores 
+                WHERE email = ? OR nome = ?";
+
+        if ($stmt = mysqli_prepare($conexao, $sql)) {
+            mysqli_stmt_bind_param($stmt, "ss", $usuario_input, $usuario_input);
+            mysqli_stmt_execute($stmt);
+            $resultado = mysqli_stmt_get_result($stmt);
+            $dados = mysqli_fetch_assoc($resultado);
+            mysqli_stmt_close($stmt);
+        } else {
+            $erro = "Erro na consulta ao banco de dados.";
+            $dados = null;
+        }
+
+        // 3. Verifica se o usuário existe e se a senha está correta
+        if ($dados) {
+
+            // ATENÇÃO:
+            // Se as senhas na tabela 'vendedores' estiverem salvas com password_hash(),
+            // use password_verify (como abaixo).
+            // Se estiverem em texto puro (ex: "123456"), TEMPORARIAMENTE use comparação direta.
+
+            if (password_verify($senha_input, $dados['senha'])) {
+            // Se as senhas NÃO forem hash, use:
+            // if ($senha_input === $dados['senha']) {
+
+                // LOGIN BEM-SUCEDIDO: Armazena dados na sessão
+                $_SESSION['admin_logado'] = true;
+                $_SESSION['admin_nome']   = $dados['nome'];
+                $_SESSION['admin_id']     = $dados['id'];
+                
+                // Redireciona para o painel de administração
+                header("Location: index.php");
+                exit();
+            } else {
+                $erro = "Usuário ou senha inválidos. Verifique suas credenciais.";
+            }
+        } else {
+            $erro = "Usuário ou senha inválidos. Verifique suas credenciais.";
+        }
     }
 }
 ?>
-
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login | Sousa Decor Admin</title>
-    <link rel="stylesheet" href="../style.css"> 
+    <link rel="stylesheet" href="../ParteDeRick/style.css"> 
     <style>
-        /* Estilos específicos para a tela de login, aproveitando classes do style.css */
-        
-        /* Centraliza a caixa de login no meio da tela */
-    
-        
-        /* Reutiliza a classe .login-container do seu CSS ou aprimora: */
         .login-container {
             width: 400px;
+            margin: 50px auto;
             padding: 40px;
             background-color: #fff;
             border-radius: 12px;
@@ -59,7 +81,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         }
         .login-container h1 {
             text-align: center;
-            color: #ff8d00; /* Cor da sua identidade visual */
+            color: #ff8d00;
             margin-bottom: 30px;
         }
         .login-container label {
@@ -76,7 +98,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             border-radius: 6px;
             box-sizing: border-box;
         }
-        /* Usa o estilo do botão do seu site, mas aplicado ao submit */
         .login-container button[type="submit"] {
             width: 100%;
             background-color: #ff8d00; 
@@ -104,11 +125,17 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 </head>
 <body class="admin-body">
 
+<?php
+// Esse topo é o topo do SITE (clientes), não do admin.
+// Não tem problema usar, é só visual.
+include_once "../ParteDeRick/topo.php";
+?>
+
 <div class="login-container">
     <h1>Acesso Administrativo</h1>
 
     <?php if ($erro): ?>
-        <p class="erro"><?php echo $erro; ?></p>
+        <p class="erro"><?php echo htmlspecialchars($erro); ?></p>
     <?php endif; ?>
 
     <form method="POST">
@@ -120,7 +147,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         
         <button type="submit">Entrar</button>
     </form>
-    <a href="?pg=../ParteDePauloeGui/cadastro_vendedor">Ainda não tem conta? Cadastre-se</a>
+    <a href="cadastro_vendedor.php">Ainda não tem conta? Cadastre-se</a>
 </div>
 
 </body>

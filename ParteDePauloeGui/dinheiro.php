@@ -22,9 +22,9 @@ function get_valor_sql($conexao, $sql, $coluna) {
 
 // --- 2. CÁLCULO DE RECEITA BRUTA (TOTAL DE VENDAS CONCLUÍDAS) ---
 // Soma o campo 'total' da tabela 'pedidos' que foram concluídos no período.
-$sql_receita = "SELECT SUM(total) AS receita_total FROM pedidos 
+$sql_receita = "SELECT SUM(preco) AS receita_total FROM vendas 
                 WHERE status = 'concluido' 
-                AND data_pedido BETWEEN '$data_inicio' AND '$data_fim'";
+                AND data BETWEEN '$data_inicio' AND '$data_fim'";
 $receita_mes = get_valor_sql($conexao, $sql_receita, 'receita_total');
 
 // --- 3. CÁLCULO DE CUSTO DAS MERCADORIAS VENDIDAS (CMV) ---
@@ -33,9 +33,9 @@ $receita_mes = get_valor_sql($conexao, $sql_receita, 'receita_total');
 // Vamos simular um custo de 25% da receita bruta.
 $sql_cmv = "SELECT SUM(p.custo * ip.quantidade) AS custo_total
             FROM itens_pedido ip
-            JOIN pedidos pe ON pe.id = ip.pedido_id
+            JOIN vendas pe ON pe.id = ip.pedido_id
             JOIN produtos p ON p.id = ip.produto_id
-            WHERE pe.status = 'concluido' AND pe.data_pedido BETWEEN '$data_inicio' AND '$data_fim'";
+            WHERE pe.status = 'concluido' AND pe.data BETWEEN '$data_inicio' AND '$data_fim'";
 // NOTA: Se sua tabela 'produtos' NÃO tiver a coluna 'custo', esta query FALHARÁ.
 // Para fins de demonstração, vou simplificar:
 // $cmv_mes = get_valor_sql($conexao, $sql_cmv, 'custo_total'); // Versão complexa real

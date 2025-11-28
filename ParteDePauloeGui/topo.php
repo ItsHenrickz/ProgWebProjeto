@@ -12,7 +12,7 @@ require_once "../ParteDeRick/config.inc.php";
 // 3. --- VERIFICAÇÃO DE LOGIN DE ADMIN (ESSENCIAL) ---
 // Se o vendedor não estiver logado, ele é redirecionado para a tela de login.
 if (!isset($_SESSION['admin_logado']) || $_SESSION['admin_logado'] !== true) {
-    header("Location: ?pg=../ParteDePauloeGui/login");
+    header("Location: ../ParteDePauloeGui/login.php");
     exit();
 }
 
@@ -115,15 +115,15 @@ $nome_vendedor = $_SESSION['admin_nome'] ?? 'Vendedor';
         <ul>
             <li><a href="index.php?pg=dashboard">Dashboard</a></li>
             <li>|</li>
-            <li><a href="index.php?pg=produtos_crud">Produtos (CRUD)</a></li>
+            <li><a href="index.php?pg=CRUD_produtos">Produtos (CRUD)</a></li>
             <li>|</li>
-            <li><a href="index.php?pg=vendas_historico">Histórico de Vendas</a></li>
+            <li><a href="index.php?pg=historico_vendas">Histórico de Vendas</a></li>
             <li>|</li>
-            <li><a href="index.php?pg=financeiro">Financeiro</a></li>
+            <li><a href="index.php?pg=dinheiro">Financeiro</a></li>
             <li>|</li>
-            <li><a href="index.php?pg=contatos">Contatos de Clientes</a></li>
+            <li><a href="index.php?pg=contato_cliente">Contatos de Clientes</a></li>
             <li>|</li>
-            <li><a href="index.php?pg=vendedores_cadastro">Cadastrar Vendedores</a></li>
+            <li><a href="index.php?pg=cadastro_vendedor">Cadastrar Vendedores</a></li>
         </ul>
     </nav>
     

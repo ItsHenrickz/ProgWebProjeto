@@ -24,4 +24,4 @@ $result = $stmt->get_result();
     </p>
 <?php endwhile; ?>
 
-<a href="finalizar_compra.php">Finalizar compra</a>
+<a href="?pg=../parteArthurYsaac/finalizar_compra">Finalizar compra</a>

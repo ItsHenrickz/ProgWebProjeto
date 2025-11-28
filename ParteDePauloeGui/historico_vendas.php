@@ -9,7 +9,7 @@ $filtro = $_GET['status'] ?? 'todos';
 $filtro = mysqli_real_escape_string($conexao, $filtro); // Segurança: Limpa a variável
 
 // 2. Define o SQL base
-$sql = "SELECT id, data_pedido, nome_cliente, total, status FROM pedidos";
+$sql = "SELECT id, data, nome_do_cliente, preco, status FROM vendas";
 
 // 3. Aplica a condição WHERE com base no filtro
 if ($filtro != 'todos') {
@@ -24,7 +24,7 @@ if ($filtro != 'todos') {
 }
 
 // 4. Ordena os pedidos mais recentes primeiro
-$sql .= " ORDER BY data_pedido DESC";
+$sql .= " ORDER BY data DESC";
 
 $resultado = mysqli_query($conexao, $sql);
 
@@ -40,7 +40,7 @@ $status_cores = [
 // Função auxiliar para criar links de filtro ativos
 function criarLinkFiltro($status, $label, $filtro_atual) {
     $ativo = ($status == $filtro_atual) ? 'style="background-color: #ff6600; color: white; border-color: #ff6600;"' : '';
-    $href  = "index.php?pg=vendas_historico&status=$status";
+    $href  = "index.php?pg=historico_vendas&status=$status";
     
     echo "<a class='botao filtro-btn' href='$href' $ativo>$label</a>";
 }
@@ -77,13 +77,13 @@ function criarLinkFiltro($status, $label, $filtro_atual) {
             if (mysqli_num_rows($resultado) > 0) {
                 while ($dados = mysqli_fetch_array($resultado)) {
                     $cor_status = $status_cores[$dados['status']] ?? 'black';
-                    $data_formatada = date('d/m/Y', strtotime($dados['data_pedido']));
+                    $data_formatada = date('d/m/Y', strtotime($dados['data']));
 
                     echo "<tr>";
                     echo "<td style='padding: 10px;'>$dados[id]</td>";
                     echo "<td>$data_formatada</td>";
-                    echo "<td>$dados[nome_cliente]</td>";
-                    echo "<td>R$ " . number_format($dados['total'], 2, ',', '.') . "</td>";
+                    echo "<td>$dados[nome_do_cliente]</td>";
+                    echo "<td>R$ " . number_format($dados['preco'], 2, ',', '.') . "</td>";
                     // Exibe o status com a cor de destaque
                     echo "<td style='color: white; background-color: $cor_status; font-weight: bold;'>$dados[status]</td>";
                     echo "<td>

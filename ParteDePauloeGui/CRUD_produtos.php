@@ -2,6 +2,16 @@
 // O topo.php já foi incluído no index.php e já iniciou a sessão e verificou o login.
 // O arquivo config.inc.php já foi incluído no topo.php, fornecendo $conexao.
 require_once "../ParteDeRick/config.inc.php";
+
+// categorias que têm tabelas próprias
+$categorias_validas = [
+    'almofadas',
+    'portaretrato',
+    'arranjos',
+    'ceramicas',
+    'calendarios'
+];
+
 // Define a ação atual e o ID do produto (se houver)
 $acao = $_GET['action'] ?? 'listar';
 $id_produto = $_GET['id'] ?? null;
@@ -13,6 +23,7 @@ $descricao = '';
 $preco = '';
 $estoque = '';
 $imagem = '';
+$categoria = '';
 $destaque_checked = '';
 $titulo_form = 'Adicionar Novo Produto';
 
@@ -31,6 +42,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && (isset($_POST['salvar_adicao']) || i
     $destaque    = isset($_POST['destaque']) ? 1 : 0;
     $id_edicao   = $_POST['id_edicao'] ?? null;
 
+    // *** NOVO: pegar categoria do formulário (apenas na adição) ***
+    $categoria = $_POST['categoria'] ?? '';
+    $categoria = mysqli_real_escape_string($conexao, $categoria);
+
     // Lógica para Upload de Imagem
     $imagem_nova = '';
     if (isset($_FILES['imagem']) && $_FILES['imagem']['error'] == 0) {
@@ -45,20 +60,46 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && (isset($_POST['salvar_adicao']) || i
         }
     }
 
+    // ======================================================
+    // ADIÇÃO DE NOVO PRODUTO
+    // ======================================================
     if (isset($_POST['salvar_adicao'])) {
-        // --- ADIÇÃO ---
-        $sql = "INSERT INTO produtos (nome, descricao, preco, estoque, destaque, imagem) 
-                VALUES ('$nome', '$descricao', $preco, $estoque, $destaque, '$imagem_nova')";
-        
-        if (mysqli_query($conexao, $sql)) {
-            $mensagem = "<p class='sucesso'>Produto **$nome** cadastrado com sucesso!</p>";
-            $acao = 'listar'; // Volta para a lista
+
+        // valida categoria (tem que ser uma das 5)
+        if (empty($categoria) || !in_array($categoria, $categorias_validas)) {
+            $mensagem = "<p class='erro'>Selecione uma categoria válida.</p>";
+            $acao = 'adicionar';
+
         } else {
-            $mensagem = "<p class='erro'>Erro ao cadastrar: " . mysqli_error($conexao) . "</p>";
-            $acao = 'adicionar'; // Permanece no formulário
+
+            // 1) insere normalmente na tabela produtos
+            $sql = "INSERT INTO produtos (nome, descricao, preco, estoque, destaque, imagem) 
+                    VALUES ('$nome', '$descricao', $preco, $estoque, $destaque, '$imagem_nova')";
+            
+            if (mysqli_query($conexao, $sql)) {
+
+                // 2) também insere na tabela da categoria escolhida
+                //    (tabelas têm apenas nome, imagem, preco)
+                $tabela_categoria = $categoria; // nome da tabela = value do select
+
+                $sql_cat = "INSERT INTO $tabela_categoria (nome, imagem, preco)
+                            VALUES ('$nome', '$imagem_nova', $preco)";
+                mysqli_query($conexao, $sql_cat); // se der erro, não quebra o cadastro principal
+
+                $mensagem = "<p class='sucesso'>Produto <strong>$nome</strong> cadastrado com sucesso na categoria <strong>$categoria</strong>!</p>";
+                $acao = 'listar'; // Volta para a lista
+
+            } else {
+                $mensagem = "<p class='erro'>Erro ao cadastrar: " . mysqli_error($conexao) . "</p>";
+                $acao = 'adicionar'; // Permanece no formulário
+            }
         }
+
+    // ======================================================
+    // EDIÇÃO DE PRODUTO
+    // ======================================================
     } elseif (isset($_POST['salvar_edicao']) && $id_edicao) {
-        // --- EDIÇÃO ---
+
         $sql = "UPDATE produtos SET 
                     nome = '$nome', 
                     descricao = '$descricao', 
@@ -74,7 +115,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && (isset($_POST['salvar_adicao']) || i
         $sql .= " WHERE id = $id_edicao";
         
         if (mysqli_query($conexao, $sql)) {
-            $mensagem = "<p class='sucesso'>Produto ID **$id_edicao** atualizado com sucesso!</p>";
+            $mensagem = "<p class='sucesso'>Produto ID <strong>$id_edicao</strong> atualizado com sucesso!</p>";
             $acao = 'listar'; // Volta para a lista
         } else {
             $mensagem = "<p class='erro'>Erro ao atualizar: " . mysqli_error($conexao) . "</p>";
@@ -85,17 +126,43 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && (isset($_POST['salvar_adicao']) || i
 }
 
 // --- 2. EXCLUIR PRODUTO (Requisição GET) ---
+// --- 2. EXCLUIR PRODUTO (Requisição GET) ---
 if ($acao == 'excluir' && $id_produto) {
     $id_produto = mysqli_real_escape_string($conexao, $id_produto);
-    
-    // Consulta para deletar
-    $sql_del = "DELETE FROM produtos WHERE id = '$id_produto'";
-    
-    if (mysqli_query($conexao, $sql_del)) {
-        $mensagem = "<p class='sucesso'>Produto ID **$id_produto** excluído com sucesso.</p>";
+
+    // 2.1 Busca dados do produto antes de excluir
+    $sql_busca = "SELECT nome, imagem FROM produtos WHERE id = '$id_produto'";
+    $res_busca = mysqli_query($conexao, $sql_busca);
+    $dadosProd = mysqli_fetch_assoc($res_busca);
+
+    if ($dadosProd) {
+        $nome_prod   = mysqli_real_escape_string($conexao, $dadosProd['nome']);
+        $imagem_prod = mysqli_real_escape_string($conexao, $dadosProd['imagem']);
+
+        // 2.2 Exclui da tabela principal 'produtos'
+        $sql_del = "DELETE FROM produtos WHERE id = '$id_produto'";
+        
+        if (mysqli_query($conexao, $sql_del)) {
+
+            // 2.3 Também tenta excluir da tabela de categoria correspondente
+            // Como não temos a categoria salva, tentamos em todas as tabelas válidas
+            foreach ($categorias_validas as $tabela_cat) {
+                $sql_del_cat = "
+                    DELETE FROM $tabela_cat
+                    WHERE imagem = '$imagem_prod'
+                    LIMIT 1
+                ";
+                mysqli_query($conexao, $sql_del_cat);
+            }
+
+            $mensagem = "<p class='sucesso'>Produto ID <strong>$id_produto</strong> excluído com sucesso (tabela principal e categoria).</p>";
+        } else {
+            $mensagem = "<p class='erro'>Erro ao excluir: " . mysqli_error($conexao) . "</p>";
+        }
     } else {
-        $mensagem = "<p class='erro'>Erro ao excluir: " . mysqli_error($conexao) . "</p>";
+        $mensagem = "<p class='erro'>Produto não encontrado para exclusão.</p>";
     }
+
     $acao = 'listar'; // Após a exclusão, volta para a lista
 }
 
@@ -150,7 +217,19 @@ if ($acao == 'editar' && $id_produto) {
 
                 if (mysqli_num_rows($resultado) > 0) {
                     while ($dados = mysqli_fetch_array($resultado)) {
-                        $img_path = !empty($dados['imagem']) ? "../" . $dados['imagem'] : "https://via.placeholder.com/60";
+                        if (!empty($dados['imagem'])) {
+                            $img = $dados['imagem'];
+
+                            if (strpos($img, 'uploads/') === 0) {
+                            // imagens novas, que você subiu pelo CRUD
+                                $img_path = '../' . $img;
+                            } else {
+                        // imagens antigas, que já têm caminho próprio
+                                $img_path = $img;
+                            }
+                        } else {
+                            $img_path = "https://via.placeholder.com/60";
+                        }
                         $destaque_label = $dados['destaque'] == 1 ? 'Sim' : 'Não';
                         $destaque_cor = $dados['destaque'] == 1 ? 'green' : 'red';
                         
@@ -206,6 +285,10 @@ if ($acao == 'editar' && $id_produto) {
                 <?php if ($acao == 'editar' && !empty($imagem)): ?>
                     <p>Imagem atual: <img src="../<?php echo $imagem; ?>" style="width: 80px; height: 80px; object-fit: cover; vertical-align: middle;"></p>
                 <?php endif; ?>
+                <?php if ($acao == 'editar' && !empty($imagem)): ?>
+                    <input type="text" value="<?php echo $imagem; ?>" 
+                    style="width:100%;padding:8px;margin-bottom:10px;" readonly>
+                <?php endif; ?>
                 <input type="file" id="imagem" name="imagem" <?php if ($acao == 'adicionar') echo 'required'; ?> style="margin-bottom: 15px;">
 
                 <div style="margin-top: 20px;">
@@ -213,8 +296,24 @@ if ($acao == 'editar' && $id_produto) {
                     <label for="destaque" style="display: inline; font-weight: normal;">Marcar como Produto em Destaque na Página Inicial</label>
                 </div>
                 
+                <?php if ($acao == 'adicionar'): ?>
+                <label for="categoria" style="display: block; margin-top: 15px;">Categoria do Produto:</label>
+                <select id="categoria" name="categoria" required
+                style="width: 100%; padding: 10px; margin-bottom: 10px; box-sizing: border-box;">
+                <option value="">Selecione uma categoria</option>
+                <option value="almofadas"    <?php if ($categoria == 'almofadas')    echo 'selected'; ?>>Almofadas</option>
+                <option value="portaretrato" <?php if ($categoria == 'portaretrato') echo 'selected'; ?>>Porta-retrato</option>
+                <option value="arranjos"     <?php if ($categoria == 'arranjos')     echo 'selected'; ?>>Arranjos</option>
+                <option value="ceramicas"    <?php if ($categoria == 'ceramicas')    echo 'selected'; ?>>Cerâmicas</option>
+                <option value="calendarios"  <?php if ($categoria == 'calendarios')  echo 'selected'; ?>>Calendários</option>
+                </select>
+                <?php endif; ?>
+            <?php if ($acao == 'editar'): ?>
+                <p style="font-size: 12px; color: #666; margin-top: -5px;">Categoria não pode ser alterada na edição (vinculada à tabela <strong><?php echo htmlspecialchars($categoria); ?></strong>).</p>
+            <?php endif; ?>
+
                 <div style="margin-top: 30px; display: flex; justify-content: space-between;">
-                    <a href='index.php?pg=produtos_crud' class='botao sair' style='background-color: #6c757d;'>Cancelar e Voltar</a>
+                    <a href='?pg=../ParteDePauloeGui/CRUD_produtos' class='botao sair' style='background-color: #6c757d;'>Cancelar e Voltar</a>
                     <button type="submit" name="<?php echo $acao == 'adicionar' ? 'salvar_adicao' : 'salvar_edicao'; ?>" 
                         class="botao" style="background-color: <?php echo $acao == 'adicionar' ? '#28a745' : '#007bff'; ?>;">
                         <?php echo $acao == 'adicionar' ? 'Cadastrar Produto' : 'Salvar Alterações'; ?>

@@ -30,7 +30,7 @@ $pg = $_GET['pg'] ?? $pagina_padrao;
 // 4. Lógica de Logout
 if ($pg == 'logout') {
     session_destroy(); // Destrói todas as informações da sessão
-    header("Location: ?pg=../ParteDePauloeGui/login");
+    header("Location: login.php");
     exit();
 }
 
