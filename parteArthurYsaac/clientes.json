@@ -1,0 +1,58 @@
+{
+    "skilletband@gmail.com": {
+        "id": 1,
+        "nome": "Skillet",
+        "email": "skilletband@gmail.com",
+        "senha": "$2y$10$p2X\/PINqIRfA4xRpEoZmhujvduRQeS\/DZU6A875qzxoRKLONeTCtm",
+        "telefone": "",
+        "endereco": "Rua São Francisco de Machado, Número 38."
+    },
+    "skilletban@gmail.com": {
+        "id": 2,
+        "nome": "Skillet",
+        "email": "skilletban@gmail.com",
+        "senha": "$2y$10$vKZIY0YDFKQDZhMU8TdWgO\/WcJsN.FXRoPoilMJsa3aGTZf1hb7ci",
+        "telefone": "",
+        "endereco": ""
+    },
+    "gordinho@gmail.com": {
+        "id": 3,
+        "nome": "Gordinho",
+        "email": "gordinho@gmail.com",
+        "senha": "$2y$10$Cpg2vS2nKG2b\/azg50Ryw.MVjl4fRY9bVMOTsNEyHef28tI21BQU6",
+        "telefone": "",
+        "endereco": ""
+    },
+    "rick@gmail.com": {
+        "id": 4,
+        "nome": "Rick",
+        "email": "rick@gmail.com",
+        "senha": "$2y$10$yMIasvmR7TG\/tKEvnWs8oe4dqL\/xPxVmY7t6QGx19TijSMnUifBpC",
+        "telefone": "",
+        "endereco": ""
+    },
+    "gordinho1@gmail.com": {
+        "id": 5,
+        "nome": "Gordinho",
+        "email": "gordinho1@gmail.com",
+        "senha": "$2y$10$sMilcgbOYJT6OyrAg2EElOB6OY0Y0\/ZOhysI4TQS.4c9dR8glYgsG",
+        "telefone": "",
+        "endereco": ""
+    },
+    "red@gmail.com": {
+        "id": 6,
+        "nome": "Red",
+        "email": "red@gmail.com",
+        "senha": "$2y$10$sfnTRPXdF6Z\/hEhq6mMuGuthcfSVwVoW1LCWBt4NWfclBWP6FcOGW",
+        "telefone": "",
+        "endereco": ""
+    },
+    "paulo@gmail.com": {
+        "id": 7,
+        "nome": "paulo",
+        "email": "paulo@gmail.com",
+        "senha": "$2y$10$YJ9qosii\/WYhvPOiE3qkcOcr4kEH7HphuCTu2OAcvC\/WlnGOkuHjS",
+        "telefone": "",
+        "endereco": ""
+    }
+}
