@@ -1,0 +1,259 @@
+/* ============================
+    ADMIN.CSS – ATUALIZADO
+  Paleta do site principal:
+  Laranja: #ff8d00
+  Laranja escuro: #e57d00
+  Amarelo suave: #ffd68a
+  Bege claro fundo: rgb(255,245,230)
+  Cinza suave: #333 (texto)
+============================ */
+
+/* --- 1. ESTILOS GERAIS --- */
+
+body {
+    margin: 0;
+    padding: 0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: rgb(255, 245, 230); /* fundo igual ao site principal */
+    color: #333;
+}
+
+/* --- 2. CABEÇALHO E NAVEGAÇÃO (DASHBOARD) --- */
+
+.admin-header {
+    background-color: #ff8d00; /* Laranja principal */
+    color: white;
+    padding: 15px 30px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+}
+
+.admin-header h2 {
+    color: white; 
+    font-weight: 500;
+}
+
+.admin-nav {
+    background-color: #ffd68a; /* Amarelo suave */
+    padding: 12px 0;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.06);
+}
+
+.admin-nav ul {
+    list-style: none;
+    display: flex;
+    justify-content: center;
+    gap: 25px;
+    padding: 0;
+    margin: 0;
+}
+
+.admin-nav a {
+    text-decoration: none;
+    color: #ff8d00; 
+    padding: 8px 18px;
+    border-radius: 6px;
+    font-weight: bold;
+    transition: 0.3s;
+}
+
+.admin-nav a:hover,
+.admin-nav a.ativo {
+    background-color: #ff8d00;
+    color: white;
+}
+
+/* Botão sair */
+.botao.sair {
+    background-color: #c82333;
+    color: white;
+    padding: 8px 15px;
+    border-radius: 6px;
+    text-decoration: none;
+    font-weight: bold;
+    transition: 0.3s;
+}
+
+.botao.sair:hover {
+    background-color: #a31623;
+}
+
+/* --- 3. LAYOUT PRINCIPAL E TABELAS (DASHBOARD) --- */
+
+.main-content {
+    padding: 30px;
+    max-width: 1200px;
+    margin: 25px auto;
+    background-color: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.07);
+}
+
+.styled-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+}
+
+.styled-table thead tr {
+    background-color: #ffd68a; 
+    color: #333;
+    font-weight: bold;
+}
+
+.styled-table th, 
+.styled-table td {
+    padding: 12px 15px;
+    border: 1px solid #e0e0e0;
+}
+
+.styled-table tbody tr:last-of-type {
+    border-bottom: 3px solid #ff8d00; 
+}
+
+/* --- 4. FORMULÁRIOS E BOTÕES GERAIS --- */
+
+.form-group input:focus,
+.form-group textarea:focus {
+    border-color: #ff8d00; 
+    outline: none;
+    box-shadow: 0 0 4px rgba(255,141,0,0.4);
+}
+
+.botao {
+    display: inline-block;
+    padding: 12px 22px;
+    font-size: 16px;
+    border-radius: 6px;
+    cursor: pointer;
+    border: none;
+    text-decoration: none;
+    font-weight: bold;
+    transition: 0.3s;
+}
+
+/* Botões principais */
+.botao.primary {
+    background-color: #ff8d00;
+    color: white;
+}
+.botao.primary:hover {
+    background-color: #e57d00;
+}
+
+/* Botão secundário */
+.botao.secondary {
+    background-color: #ffd68a;
+    color: #333;
+}
+.botao.secondary:hover {
+    background-color: #ffbe55;
+}
+
+/* Botão perigo */
+.botao.danger {
+    background-color: #dc3545;
+    color: #fff;
+}
+.botao.danger:hover {
+    background-color: #b12531;
+}
+
+/* --- 5. LOGIN ADMIN --- */
+
+.admin-body {
+    background-color: rgb(255,245,230);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+}
+
+.login-container {
+    width: 100%;
+    max-width: 400px;
+    padding: 35px;
+    background-color: #fff;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.10);
+    border-top: 6px solid #ff8d00; 
+}
+
+.login-container h1 {
+    text-align: center;
+    color: #ff8d00;
+    font-size: 26px;
+    margin-bottom: 25px;
+}
+
+.login-container label {
+    display: block;
+    font-weight: bold;
+    margin-bottom: 6px;
+    color: #444;
+}
+
+.login-container input[type="text"],
+.login-container input[type="password"] {
+    width: 100%;
+    padding: 12px;
+    margin-bottom: 18px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    box-sizing: border-box;
+}
+
+.login-container input:focus {
+    border-color: #ff8d00;
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(255,141,0,0.25);
+}
+
+/* Botão login */
+.login-container button[type="submit"] {
+    width: 100%;
+    background-color: #ff8d00;
+    color: white;
+    padding: 12px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 18px;
+    transition: 0.3s;
+}
+
+.login-container button[type="submit"]:hover {
+    background-color: #e57d00;
+}
+
+.erro {
+    color: #721c24;
+    background-color: #f8d7da;
+    border: 1px solid #f5c6cb;
+    padding: 10px;
+    border-radius: 6px;
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+/* --- 6. ESTILOS ESPECÍFICOS PARA DETALHES DO PEDIDO --- */
+
+.info-geral p {
+    margin: 5px 0; /* Espaço vertical reduzido */
+    line-height: 1.5;
+}
+
+.styled-table tfoot td {
+    font-size: 1.1em; /* Ajuste o tamanho da fonte no footer */
+}
+
+/* Estilo para destacar o valor total */
+.styled-table tfoot td.total-valor {
+    background-color: #ffd68a; /* Amarelo suave para destacar o total */
+    font-weight: bold;
+    color: #333;
+}
